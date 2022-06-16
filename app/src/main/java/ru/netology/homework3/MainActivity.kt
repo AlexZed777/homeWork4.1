@@ -2,7 +2,10 @@ package ru.netology.homework3
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.annotation.DrawableRes
 import ru.netology.homework3.databinding.ActivityMainBinding
+import java.math.RoundingMode
+import java.text.DecimalFormat
 
 
 class MainActivity : AppCompatActivity(R.layout.activity_main) {
@@ -17,9 +20,9 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
             author = getString(R.string.author_name),
             content = getString(R.string.text),
             date = getString(R.string.date),
-            likes = 500,
-            shares = 800,
-            views = 900
+            likes = 999,
+            shares = 999,
+            views = 1099
         )
 
         binding.render(post)
@@ -52,11 +55,45 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         authorName.text = post.author
         text.text = post.content
         date.text = post.date
-        countLikes.text = post.likes.toString()
-        countShares.text = post.shares.toString()
-        countViews.text = post.views.toString()
+        likes.setImageResource(getLikeIcon(post.myLikes))
+        countLikes.text = getBeautifulDisplay(post.likes)
+        countShares.text = getBeautifulDisplay(post.shares)
+        countViews.text = getBeautifulDisplay(post.views)
 
 
+    }
+
+    @DrawableRes
+    private fun getLikeIcon(liked: Boolean) =
+        if (liked) R.drawable.ic_liked_24 else {
+            R.drawable.ic_likes_24dp
+        }
+
+
+    private fun getBeautifulDisplay(counts: Int): String {
+        if (counts in 1000..1099) {
+            val result = counts / 1000
+            return "$result K"
+        } else if (counts in 10000..999_999) {
+            val count = counts / 1000.toFloat()
+            val dec = DecimalFormat("#")
+            dec.setRoundingMode(RoundingMode.DOWN)
+            val result = dec.format(count)
+            return "$result K"
+        } else if (counts in 1100..9_999) {
+            val count = counts / 1000.toFloat()
+            val dec = DecimalFormat("#.#")
+            dec.setRoundingMode(RoundingMode.DOWN)
+            val result = dec.format(count)
+            return "$result K"
+        } else if (counts >= 1_000_000) {
+            val count = counts / 1_000_000.toFloat()
+            val dec = DecimalFormat("#.#")
+            dec.setRoundingMode(RoundingMode.DOWN)
+            val result = dec.format(count)
+            return "$result M"
+        }
+        return "$counts"
     }
 
 }
